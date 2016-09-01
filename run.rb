@@ -64,7 +64,8 @@ output.puts '</users>'
 output.flush
 output.close
 
-puts 'Output created:' + output_file
+puts 'Output created: ' + output_file
+puts 'Users included: ' + users_count.to_s
 
 
 
