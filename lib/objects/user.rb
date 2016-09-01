@@ -7,18 +7,10 @@ class User
 
   attr_reader *USER_ATTRIBUTES
 
-  def initialize(csv_row)
-
-    details = CSV.parse(csv_row)
-
-    # details should be an array of size 16
-
+  def initialize(data)
     USER_ATTRIBUTES.each_with_index do |key, i|
-
-      self.send("#{key}=".to_sym, details[0][i])
-
+      self.send("#{key}=".to_sym, data[i])
     end
-
   end
 
   # ALMA PRIMARY ID
@@ -141,7 +133,7 @@ class User
   private
 
   def alma_string(str, size = MAXIMUM_STRING_VALUE_LENGTH)
-    str.truncate size
+    str[0...size]
   end
 
 end
