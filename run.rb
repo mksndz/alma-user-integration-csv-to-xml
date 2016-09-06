@@ -20,7 +20,7 @@ output_file = ARGV[1]
 # Load ERB Template
 template_file = File.open('./lib/templates/user_xml_v2_template.xml.erb')
 
-# Initilize Users Array and counter
+# Initaialize Users Array and counter
 users = []
 users_count = 0
 

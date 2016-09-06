@@ -1,5 +1,3 @@
-require 'csv'
-
 class User
 
   USER_ATTRIBUTES = %w(primary_id first_name middle_name last_name gender user_group campus_code status address_line_1 address_line_2 address_city address_state_province address_postal_code address_country email phone)
