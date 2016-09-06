@@ -6,6 +6,7 @@
 require './lib/objects/user'
 require 'ostruct'
 require 'erb'
+require 'csv'
 
 unless ARGV.length == 2
   puts 'Input and Output files not defined, using testing defaults'
