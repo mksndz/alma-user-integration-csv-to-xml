@@ -24,6 +24,7 @@ Only User object has tests for now
 
 ## To Do
 
++ Secondary Identifiers
 + FTP Transfer of created file (Zip'd) to Alma server
 + Logging to file
 + Better exception handling for File I/O
