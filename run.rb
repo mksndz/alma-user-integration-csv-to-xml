@@ -27,7 +27,7 @@ users_count = 0
 
 # Convert CSV data into User objects, storing in Array
 row_count = 0
-CSV.foreach(input_file, quote_char: "'") do |row|
+CSV.foreach(input_file, quote_char: '"') do |row|
   row_count += 1
   begin
     users << User.new(row)
