@@ -5,9 +5,11 @@
 
 require './lib/objects/user'
 require 'ostruct'
+require 'yaml'
 require 'erb'
 require 'csv'
 require 'zip'
+require 'net/sftp'
 
 unless ARGV.length == 2
   puts 'Input and Output files not defined, using testing defaults'
@@ -18,6 +20,9 @@ end
 
 input_file = ARGV[0]
 output_file = ARGV[1]
+
+# Load configs
+secrets = YAML.load_file './config/secrets.yml'
 
 # Load ERB Template
 template_file = File.open('./lib/templates/user_xml_v2_template.xml.erb')
@@ -68,12 +73,16 @@ output.flush
 output.close
 
 # zip file
-Zip::File.open(output_file.gsub('.xml','.zip'), Zip::File::CREATE) do |zipfile|
-  zipfile.add output_file.gsub('./data/',''), output_file
+alma_file = output_file.gsub('.xml','.zip')
+Zip::File.open(alma_file, Zip::File::CREATE) do |zipfile|
+  zipfile.add alma_file.gsub('./data/',''), output_file
 end
 
 # ftp file
-# todo
+remote_file = 'test/' + alma_file.gsub('./data/','')
+Net::SFTP.start(secrets['ftp']['url'], secrets['ftp']['user'], password: secrets['ftp']['pass'], port: secrets['ftp']['port']) do |c|
+  c.upload! alma_file, remote_file
+end
 
 puts 'Output created: ' + output_file
 puts 'Users included: ' + users_count.to_s

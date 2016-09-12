@@ -22,7 +22,6 @@ Only User object has tests for now
 
 ## To Do
 
-+ FTP Transfer of created file (Zip'd) to Alma server
 + Logging to file
 + Better exception handling for File I/O
 + More tests
