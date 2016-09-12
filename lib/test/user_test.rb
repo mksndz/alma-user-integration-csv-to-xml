@@ -1,12 +1,12 @@
 require 'minitest/autorun'
-require '../lib/objects/user'
+require './lib/objects/user'
 
 class UserTest < MiniTest::Test
 
 
   def setup
 
-    test_data = %w("primary_id" "first_name" "middle_name" "last_name" "gender" "user_group" "campus_code" "status" "address_line_1" "address_line_2" "address_city" "address_state_province" "address_postal_code" "address_country" "email" "phone")
+    test_data = %w("primary_id" "first_name" "middle_name" "last_name" "gender" "user_group" "campus_code" "status" "address_line_1" "address_line_2" "address_city" "address_state_province" "address_postal_code" "address_country" "email" "phone" "secondary_id")
     @user = User.new test_data
 
   end
@@ -98,6 +98,12 @@ class UserTest < MiniTest::Test
   def test_has_phone
 
     assert_equal '"phone"', @user.phone
+
+  end
+
+  def test_has_secondary_id
+
+    assert_equal '"secondary_id"', @user.secondary_id
 
   end
 

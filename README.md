@@ -18,16 +18,13 @@ Will output to /data/sample_output.xml
 
 Only User object has tests for now
 
-`cd test`
-
-`ruby user_test.rb`
+`ruby lib/test/user_test.rb`
 
 ## To Do
 
-+ Secondary Identifiers
 + FTP Transfer of created file (Zip'd) to Alma server
 + Logging to file
 + Better exception handling for File I/O
 + More tests
-+ _Validation of controlled values using Alma Configuration API?_
++ _ValidaIs a secondary identifier field needed?tion of controlled values using Alma Configuration API?_
 

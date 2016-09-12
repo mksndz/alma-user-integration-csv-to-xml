@@ -49,6 +49,7 @@ defaults = OpenStruct.new
 defaults.preferred_address_type = 'HOME'
 defaults.preferred_phone_type   = 'MOBILE'
 defaults.preferred_email_type   = 'PERSONAL'
+defaults.secondary_id_type      = '01'
 
 # Initialize XML
 output.puts "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<users>"

@@ -1,6 +1,6 @@
 class User
 
-  USER_ATTRIBUTES = %w(primary_id first_name middle_name last_name gender user_group campus_code status address_line_1 address_line_2 address_city address_state_province address_postal_code address_country email phone)
+  USER_ATTRIBUTES = %w(primary_id first_name middle_name last_name gender user_group campus_code status address_line_1 address_line_2 address_city address_state_province address_postal_code address_country email phone secondary_id)
   MAXIMUM_STRING_VALUE_LENGTH = 255
 
   attr_reader *USER_ATTRIBUTES
@@ -126,6 +126,13 @@ class User
   # max_length:   255
   def phone=(v)
     @phone = alma_string v
+  end
+
+  # SECONDARY ID
+  # type:         string
+  # max_length:   255
+  def secondary_id=(v)
+    @secondary_id = alma_string v
   end
 
   private
