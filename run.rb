@@ -11,6 +11,9 @@ require 'csv'
 require 'zip'
 require 'net/sftp'
 
+SECRETS_FILE = './config/secrets.yml'
+XML_TEMPLATE_FILE = './lib/templates/user_xml_v2_template.xml.erb'
+
 unless ARGV.length == 2
   puts 'Input and Output files not defined, using testing defaults'
   ARGV[0] = './data/sample.csv'
@@ -21,11 +24,30 @@ end
 input_file = ARGV[0]
 output_file = ARGV[1]
 
+unless File.exist? input_file
+  puts 'Input file not found. Stopping.'
+  exit
+end
+
 # Load configs
-secrets = YAML.load_file './config/secrets.yml'
+
+unless File.exist? SECRETS_FILE
+  puts "Secrets file could not be found @ #{SECRETS_FILE}. Stopping."
+  exit
+end
+
+secrets = YAML.load_file SECRETS_FILE
+unless secrets.is_a? Hash
+  puts 'Secrets config file not properly parsed. Stopping.'
+  exit
+end
 
 # Load ERB Template
-template_file = File.open('./lib/templates/user_xml_v2_template.xml.erb')
+unless File.exist? XML_TEMPLATE_FILE
+  puts "Could not find XML template file @ #{XML_TEMPLATE_FILE}. Stopping."
+  exit
+end
+template_file = File.open XML_TEMPLATE_FILE
 
 # Initaialize Users Array and counter
 users = []
@@ -62,7 +84,11 @@ output.puts "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<use
 
 # Write User XML to output file
 users.each do |user|
-  output.puts(template.result(binding))
+  begin
+    output.puts(template.result(binding))
+  rescue Exception => e
+    puts "Error creating XML for User #{user.primary_id}: #{e.message}" # todo reconsider use of primary id in logs when in production
+  end
 end
 
 # Finish XML
@@ -74,17 +100,28 @@ output.close
 
 # zip file
 alma_file = output_file.gsub('.xml','.zip')
-Zip::File.open(alma_file, Zip::File::CREATE) do |zipfile|
-  zipfile.add alma_file.gsub('./data/',''), output_file
+begin
+  Zip::File.open(alma_file, Zip::File::CREATE) do |zipfile|
+    zipfile.add alma_file.gsub('./data/',''), output_file
+  end
+rescue Exception => e
+  puts "Problem with compressing XML file for delivery: #{e.message}"
+  exit
 end
 
 # ftp file
 remote_file = 'test/' + alma_file.gsub('./data/','')
-Net::SFTP.start(secrets['ftp']['url'], secrets['ftp']['user'], password: secrets['ftp']['pass'], port: secrets['ftp']['port']) do |c|
-  c.upload! alma_file, remote_file
+begin
+  Net::SFTP.start(secrets['ftp']['url'], secrets['ftp']['user'], password: secrets['ftp']['pass'], port: secrets['ftp']['port']) do |c|
+    c.upload! alma_file, remote_file
+  end
+rescue Exception => e
+  puts "Problem delivering file to GIL FTP server: #{e.message}"
+  exit
 end
 
 puts 'Output created: ' + output_file
+puts 'Payload delivered: ' + remote_file
 puts 'Users included: ' + users_count.to_s
 
 
