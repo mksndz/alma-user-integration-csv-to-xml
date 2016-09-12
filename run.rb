@@ -7,6 +7,7 @@ require './lib/objects/user'
 require 'ostruct'
 require 'erb'
 require 'csv'
+require 'zip'
 
 unless ARGV.length == 2
   puts 'Input and Output files not defined, using testing defaults'
@@ -65,6 +66,14 @@ output.puts '</users>'
 # Write to file and close
 output.flush
 output.close
+
+# zip file
+Zip::File.open(output_file.gsub('.xml','.zip'), Zip::File::CREATE) do |zipfile|
+  zipfile.add output_file.gsub('./data/',''), output_file
+end
+
+# ftp file
+# todo
 
 puts 'Output created: ' + output_file
 puts 'Users included: ' + users_count.to_s
