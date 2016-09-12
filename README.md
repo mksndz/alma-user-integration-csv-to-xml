@@ -23,7 +23,6 @@ Only User object has tests for now
 ## To Do
 
 + Logging to file
-+ Better exception handling for File I/O
 + More tests
 + _Validation of controlled values using Alma Configuration API?_
 
