@@ -26,5 +26,5 @@ Only User object has tests for now
 + Logging to file
 + Better exception handling for File I/O
 + More tests
-+ _ValidaIs a secondary identifier field needed?tion of controlled values using Alma Configuration API?_
++ _Validation of controlled values using Alma Configuration API?_
 
