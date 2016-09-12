@@ -22,7 +22,6 @@ Only User object has tests for now
 
 ## To Do
 
-+ Logging to file
-+ More tests
++ More tests?
 + _Validation of controlled values using Alma Configuration API?_
 

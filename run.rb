@@ -1,18 +1,17 @@
-# Main Script
-# Requires two command-line parameters
-# Input File
-# Output File
-
-require './lib/objects/user'
+require 'logger'
 require 'ostruct'
 require 'yaml'
 require 'erb'
 require 'csv'
 require 'zip'
 require 'net/sftp'
+require './lib/objects/user'
 
+LOG_FILE = './log.log'
 SECRETS_FILE = './config/secrets.yml'
 XML_TEMPLATE_FILE = './lib/templates/user_xml_v2_template.xml.erb'
+
+log = Logger.new LOG_FILE
 
 unless ARGV.length == 2
   puts 'Input and Output files not defined, using testing defaults'
@@ -25,26 +24,26 @@ input_file = ARGV[0]
 output_file = ARGV[1]
 
 unless File.exist? input_file
-  puts 'Input file not found. Stopping.'
+  log.fatal 'Input file not found. Stopping.'
   exit
 end
 
 # Load configs
 
 unless File.exist? SECRETS_FILE
-  puts "Secrets file could not be found @ #{SECRETS_FILE}. Stopping."
+  log.fatal "Secrets file could not be found @ #{SECRETS_FILE}. Stopping."
   exit
 end
 
 secrets = YAML.load_file SECRETS_FILE
 unless secrets.is_a? Hash
-  puts 'Secrets config file not properly parsed. Stopping.'
+  log.fatal 'Secrets config file not properly parsed. Stopping.'
   exit
 end
 
 # Load ERB Template
 unless File.exist? XML_TEMPLATE_FILE
-  puts "Could not find XML template file @ #{XML_TEMPLATE_FILE}. Stopping."
+  log.fatal "Could not find XML template file @ #{XML_TEMPLATE_FILE}. Stopping."
   exit
 end
 template_file = File.open XML_TEMPLATE_FILE
@@ -61,7 +60,7 @@ CSV.foreach(input_file, quote_char: '"') do |row|
     users << User.new(row)
     users_count += 1
   rescue StandardError => e
-    puts "Couldn't create User object from CSV row #{row_count}: #{e.message}"
+    log.error "Couldn't create User object from CSV row #{row_count}: #{e.message}"
   end
 end
 
@@ -87,7 +86,7 @@ users.each do |user|
   begin
     output.puts(template.result(binding))
   rescue Exception => e
-    puts "Error creating XML for User #{user.primary_id}: #{e.message}" # todo reconsider use of primary id in logs when in production
+    log.error "Error creating XML for User #{user.primary_id}: #{e.message}" # todo reconsider use of primary id in logs when in production
   end
 end
 
@@ -105,7 +104,7 @@ begin
     zipfile.add alma_file.gsub('./data/',''), output_file
   end
 rescue Exception => e
-  puts "Problem with compressing XML file for delivery: #{e.message}"
+  log.fatal "Problem with compressing XML file for delivery: #{e.message}"
   exit
 end
 
@@ -116,14 +115,13 @@ begin
     c.upload! alma_file, remote_file
   end
 rescue Exception => e
-  puts "Problem delivering file to GIL FTP server: #{e.message}"
+  log.fatal "Problem delivering file to GIL FTP server: #{e.message}"
   exit
 end
 
-puts 'Output created: ' + output_file
-puts 'Payload delivered: ' + remote_file
-puts 'Users included: ' + users_count.to_s
-
+log.info 'Output created: ' + output_file
+log.info 'Payload delivered: ' + remote_file
+log.info 'Users included: ' + users_count.to_s
 
 
 
