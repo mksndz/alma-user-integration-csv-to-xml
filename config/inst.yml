@@ -1,0 +1,8 @@
+augusta:
+  - path: 'data/augusta_staff.yml'
+    group: 'STAFF'
+    weight: 9
+uga:
+  - path: 'data/sample.yml'
+    group: 'ALL'
+    weight: 5

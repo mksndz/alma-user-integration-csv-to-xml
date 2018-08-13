@@ -1,0 +1,4 @@
+data/*
+!data/sample.csv
+config/secrets.yml
+*.log
